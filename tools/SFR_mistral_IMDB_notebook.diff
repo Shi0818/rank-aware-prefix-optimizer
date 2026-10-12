@@ -1,0 +1,60 @@
+--- a/SFR_mistral_IMDB.ipynb  (cell 17)
++++ b/SFR_mistral_IMDB_rank.ipynb  (cell 17)
+@@ -1,6 +1,27 @@
+ from DGD.help_functions import get_embedding, perturb_sentence, rank_tokens_by_importance, get_initial_ids, user_prompt_generation, check_success, check_MSEloss, get_first_output_token, get_neighbor_ids, check_success, get_relevant_documents
+-from DGD.DGD import get_optimized_prefix_embedding
++from DGD.DGD_rank import get_optimized_prefix_embedding_rank as get_optimized_prefix_embedding
+ import random
++
++# ---------------------------------------------------------------------------
++# [FIX] The judging convention and the optimisation convention must agree --
++#       otherwise the search climbs a gradient computed for the wrong signal.
++#   GGPP_USE_INSTRUCT=0 -> bare query (paper convention, default)
++#   GGPP_USE_INSTRUCT=1 -> upstream Instruct-wrapped query
++# The judge side relies on the query-wrapper switch in DGD/help_functions.py;
++# when that switch is absent both sides degrade to the instruct convention
++# together, so "what is optimised" always equals "what is graded" -- never a
++# silent mismatch.
++# ---------------------------------------------------------------------------
++import os, inspect
++
++_WANT_BARE = os.environ.get("GGPP_USE_INSTRUCT", "0") != "1"
++_HAS_SWITCH = "use_instruct" in inspect.signature(get_relevant_documents).parameters
++if _WANT_BARE and not _HAS_SWITCH:
++    print("[warn] DGD/help_functions.py has no use_instruct switch -> judging and "
++          "optimisation both degrade to the instruct convention "
++          "(results are not comparable to the paper convention)")
++USE_INSTRUCT = (not _WANT_BARE) if _HAS_SWITCH else True
++_JUDGE_KW = {"use_instruct": USE_INSTRUCT} if _HAS_SWITCH else {}
+ 
+ # Set Device
+ device = torch.device("cuda")
+@@ -47,7 +68,7 @@
+     print("----------> intital_prefix: ", intital_prefix)
+ 
+     topk_result = 10
+-    top_k = get_relevant_documents(torch.stack(nconst_embedding), intital_prefix+user_prompt, topk_result, model, tok)
++    top_k = get_relevant_documents(torch.stack(nconst_embedding), intital_prefix+user_prompt, topk_result, model, tok, **_JUDGE_KW)
+     is_success = check_success(target_prompt_id, user_prompt_id, top_k)
+     
+     if is_success > 1:
+@@ -58,9 +79,9 @@
+         print("----------> optimized prompt index: ", i)
+         
+         thredhold = 1
+-        token_ids_tensor, optimized_prefix, loss_list = get_optimized_prefix_embedding(MODEL_NAME, passages_embeddings[user_prompt_id], passages_embeddings[target_prompt_id], user_prompt, prompt_text, target_text, initial_ids, iterations, user_prompt_id, target_prompt_id, topk_result, model, tok, nconst_embedding, thredhold)
++        token_ids_tensor, optimized_prefix, loss_list = get_optimized_prefix_embedding(MODEL_NAME, passages_embeddings[user_prompt_id], passages_embeddings[target_prompt_id], user_prompt, prompt_text, target_text, initial_ids, iterations, user_prompt_id, target_prompt_id, topk_result, model, tok, nconst_embedding, thredhold, seed=20261008+i, use_instruct=USE_INSTRUCT)
+         token_ids = token_ids_tensor[0].tolist()
+-        top_k = get_relevant_documents(torch.stack(nconst_embedding), optimized_prefix+user_prompt, topk_result, model, tok)
++        top_k = get_relevant_documents(torch.stack(nconst_embedding), optimized_prefix+user_prompt, topk_result, model, tok, **_JUDGE_KW)
+         is_success = check_success(target_prompt_id, user_prompt_id, top_k)
+         
+     results_store_dct[i]["user_prompt_id"] = i
+@@ -73,6 +94,7 @@
+     results_store_dct[i]["is_success"] = is_success
+     results_store_dct[i]["search_range"] = search_range
+     results_store_dct[i]["topk_result"] = topk_result
++    results_store_dct[i]["judge_mode"] = "instruct" if USE_INSTRUCT else "bare"
+ 
+     print("----------> optimized_prefix: ", optimized_prefix)
+     print("----------> user_prompt_text: ", prompt_text)

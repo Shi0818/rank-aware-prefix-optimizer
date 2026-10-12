@@ -1,0 +1,18 @@
+metric,original_optimizer,rank_aware_optimizer,delta
+queries,100,100,
+strict_success (target rank 1 AND correct passage out of top-10),15/100 = 15.0%,72/100 = 72.0%,+57.0 pt
+correct_passage_evicted_from_top10,15/100 = 15.0%,73/100 = 73.0%,+58.0 pt
+target_reaches_rank_1,95/100 = 95.0%,90/100 = 90.0%,-5.0 pt
+median_rank_correct_passage_capped11,2.0,11.0,+9.0
+median_cosine_correct_passage (before -> after attack),0.7505,0.6089,-0.1416
+
+judging_convention,strict_success,share,
+bare query (reported convention),72,72.0%,
+instruct-wrapped query,4,4.0%,
+
+wall_clock_seconds,value,,
+min,5.8,,
+median,205.9,,
+mean,248.1,,
+max,555.6,,
+queries hitting the 500-iteration cap,26,,

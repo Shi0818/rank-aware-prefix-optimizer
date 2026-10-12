@@ -1,0 +1,35 @@
+--- a/DGD/help_functions.py
++++ b/DGD/help_functions.py
+@@ -389,9 +389,29 @@
+     return first_output_token
+ 
+ # SFR mistral
+-def get_relevant_documents(nconst_embeddings, query, topK, model, tok):
+-    task = 'Given a web search query, retrieve relevant passages that answer the query'
+-    task_query = get_detailed_instruct(task, query)
++# ---------------------------------------------------------------------------
++# [FIX] Query-wrapper switch.  ``None`` -> fall back to GGPP_USE_INSTRUCT, whose
++#       default keeps the upstream behaviour, so callers that pass nothing are
++#       completely unaffected (backward compatible).
++#   Upstream unconditionally wraps the query as "Instruct: ...\nQuery: ..."
++#   (~25 extra tokens), whereas the paper's Table 2 caption and the appendix
++#   A.3 / A.4 retrieval examples use a *bare* query.  Making this layer explicit
++#   is what allows the attack side and the judge side to share one convention:
++#     use_instruct=False -> bare query (paper convention)
++#     use_instruct=True  -> upstream behaviour
++# ---------------------------------------------------------------------------
++USE_INSTRUCT = os.environ.get('GGPP_USE_INSTRUCT', '1') == '1'
++
++
++def get_relevant_documents(nconst_embeddings, query, topK, model, tok, use_instruct=None):
++    if use_instruct is None:
++        use_instruct = USE_INSTRUCT
++    if use_instruct:
++        task = 'Given a web search query, retrieve relevant passages that answer the query'
++        task_query = get_detailed_instruct(task, query)
++    else:
++        task_query = query          # paper convention: bare query, no task instruction
++    print("use_instruct: ", use_instruct)
+     print("task_query: ", task_query)
+     batch_dict = tok(task_query, return_tensors="pt").to(device)
+     with torch.no_grad():

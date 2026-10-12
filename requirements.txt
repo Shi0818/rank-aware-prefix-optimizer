@@ -1,0 +1,26 @@
+# GGPP (prompt perturbation in RAG) — runtime dependencies
+#
+# The upstream repository ships no requirements file; this one records the
+# environment the improved optimizer was developed and measured in.
+# Pin as needed for your own cluster.
+#
+# CUDA note: SFR-Embedding-Mistral is ~7B in fp16 (~15 GB), so a single 24 GB
+# card is enough for one query at a time. The optimizer keeps one extra forward
+# per verification batch, so VRAM headroom matters more than throughput.
+
+torch>=2.0,<3.0
+transformers>=4.36          # Mistral support + SFR-Embedding-Mistral
+accelerate
+sentencepiece                # SFR/Mistral tokenizer
+numpy
+# official judging path uses faiss/HNSW; use faiss-cpu if you only run the
+# exact-cosine fallback judge
+faiss-gpu                    # or faiss-cpu
+
+# --- detection notebook (Prefix_detection_SFR_Mistral) ---
+pandas
+scikit-learn
+
+# --- notebook niceties ---
+tqdm
+livelossplot

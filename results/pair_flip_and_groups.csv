@@ -1,0 +1,11 @@
+section,key,count,query_ids
+pair_flip,fail_to_success,57,208 209 211 212 214 216 217 224 226 227 228 230 231 234 236 237 238 241 244 247 248 250 251 253 254 255 259 260 261 264 265 267 270 272 273 274 275 276 279 280 281 283 284 285 288 289 290 292 293 294 295 300 301 303 304 306 307
+pair_flip,success_to_fail,0,
+pair_flip,both_success,15,215 218 220 225 239 240 242 245 246 263 286 287 296 298 299
+pair_flip,both_fail,28,210 213 219 221 222 223 229 232 233 235 243 249 252 256 257 258 262 266 268 269 271 277 278 282 291 297 302 305
+
+section,group,n,orig_strict_success,rank_strict_success,rank_target_lost_from_rank1
+pre_attack_target_rank,target already rank 1,62,15,53,0
+pre_attack_target_rank,target not rank 1,38,0,19,10
+
+queries_losing_target_rank1,210 219 221 235 249 269 277 282 297 302

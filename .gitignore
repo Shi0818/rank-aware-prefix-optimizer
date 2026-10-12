@@ -1,0 +1,29 @@
+# --- downloaded upstream baseline (re-fetch with tools/fetch_upstream.py) ---
+third_party/upstream/
+
+# --- python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# --- notebooks ---
+.ipynb_checkpoints/
+
+# --- models, datasets, caches (large; see docs/REPRODUCE.md) ---
+models/
+datasets/
+*.pkl
+
+# --- run outputs (results/ IS tracked: it holds the reported tables) ---
+results_pair/
+results_smoke/
+results_ablation/
+results_improved/
+results_*/
+
+# --- local tooling ---
+.DS_Store
+Thumbs.db
+*.log

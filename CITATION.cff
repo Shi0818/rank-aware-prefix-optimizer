@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using the metadata below. Please also cite the original GGPP paper, listed under references."
+title: "GGPP-RankAware: rank-aware prefix optimization for prompt-perturbation attacks on RAG retrieval"
+abstract: >-
+  A drop-in replacement for the prefix optimizer in the GGPP (KDD'24) release that
+  optimises the rank of the correct passage directly instead of a cosine proxy.
+  On IMDB + SFR-Embedding-Mistral over 100 per-query paired queries, strict success
+  rises from 15% to 72% with 57 fail-to-success flips and no regressions.
+type: software
+license: MIT
+version: 0.1.0
+date-released: "2026-10-13"
+repository-code: "https://github.com/<your-account>/GGPP-RankAware"
+keywords:
+  - retrieval-augmented generation
+  - adversarial attack
+  - embedding robustness
+  - prompt perturbation
+  - rank-based objective
+authors:
+  - name: "GGPP-RankAware contributors"
+references:
+  - type: conference-paper
+    title: "Prompt Perturbation in Retrieval-Augmented Generation"
+    year: 2024
+    conference:
+      name: "ACM SIGKDD Conference on Knowledge Discovery and Data Mining (KDD)"
+    url: "https://github.com/Hadise-zb/Prompt-Perturbation-in-Retrieval-Augmented-Generation"
