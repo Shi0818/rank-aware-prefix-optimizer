@@ -1,26 +1,36 @@
 # -*- coding: utf-8 -*-
 """
-Fetch the upstream GGPP files used as the regeneration / verification baseline
-=============================================================================
-Downloads a byte-identical copy of the upstream release into
-``third_party/upstream/`` so that
+Fetch the upstream GGPP files and install the ones the package imports
+======================================================================
+The upstream release ships **no licence file**, so this repository does not
+redistribute its code. Instead this script downloads a byte-identical copy into
+``third_party/upstream/`` and then *installs* the two files the package imports
+from:
 
-  * ``tools/build_rank_notebook.py``     can regenerate the improved notebook,
-  * ``tools/build_help_functions_patch.py`` can regenerate the query-wrapper switch,
-  * ``tools/verify_upstream_diff.py``    can prove that only the intended lines differ.
+    DGD/DGD.py             upstream copy, used as the "original" arm of the A/B
+    DGD/help_functions.py  upstream file + the query-wrapper switch (regenerated)
 
-The files are kept out of version control (see ``.gitignore``); this script is the
-reproducible way to obtain them.
+Both are git-ignored. After ``python tools/fetch_upstream.py`` the import paths
+used everywhere else in the code work unchanged.
+
+The downloaded copies are also the baseline for
+
+  * ``tools/build_rank_notebook.py``     regenerating the improved notebook,
+  * ``tools/build_help_functions_patch.py`` regenerating the query-wrapper switch,
+  * ``tools/verify_upstream_diff.py``    proving that only the intended lines differ.
 
 Usage:
-  python tools/fetch_upstream.py            # skip files that already exist
-  python tools/fetch_upstream.py --force    # re-download everything
-  python tools/fetch_upstream.py --check    # only verify existing files by md5
+  python tools/fetch_upstream.py             # download (if needed) and install
+  python tools/fetch_upstream.py --force     # re-download everything
+  python tools/fetch_upstream.py --check     # only verify existing files by md5
+  python tools/fetch_upstream.py --no-install  # download only, do not touch DGD/
 """
 
 import argparse
 import hashlib
 import os
+import shutil
+import subprocess
 import sys
 import urllib.request
 
@@ -56,10 +66,41 @@ def fetch(url, timeout=60):
     return urllib.request.urlopen(req, timeout=timeout).read()
 
 
+def install():
+    """Place the upstream files where the package imports them from.
+
+    Neither file is distributed in this repository: the upstream release carries no
+    licence, so redistributing its code would have no legal basis. They are
+    regenerated here instead, which keeps every import path in the code unchanged
+    while the repository itself contains only this project's own work.
+    """
+    src_dgd = os.path.join(DST_DIR, "DGD_DGD.py")
+    if not os.path.exists(src_dgd):
+        print("  [skip] install: third_party/upstream/DGD_DGD.py is missing")
+        return False
+
+    dst_dgd = os.path.join(PKG, "DGD", "DGD.py")
+    shutil.copyfile(src_dgd, dst_dgd)
+    print(f"  install DGD/DGD.py             (byte-identical upstream copy)")
+
+    # help_functions.py = upstream + the switchable query wrapper
+    builder = os.path.join(HERE, "build_help_functions_patch.py")
+    r = subprocess.run([sys.executable, builder], capture_output=True, text=True)
+    dst_hf = os.path.join(PKG, "DGD", "help_functions.py")
+    if r.returncode != 0 or not os.path.exists(dst_hf):
+        err = (r.stderr or r.stdout or "").strip().splitlines()
+        print(f"  [FAIL] install DGD/help_functions.py: {err[-1] if err else 'unknown error'}")
+        return False
+    print(f"  install DGD/help_functions.py  (upstream + query-wrapper switch)")
+    return True
+
+
 def main():
     ap = argparse.ArgumentParser(description="fetch upstream GGPP baseline files")
     ap.add_argument("--force", action="store_true", help="re-download even if present")
     ap.add_argument("--check", action="store_true", help="only report md5 of what exists")
+    ap.add_argument("--no-install", action="store_true",
+                    help="download into third_party/upstream/ but do not write DGD/")
     args = ap.parse_args()
 
     os.makedirs(DST_DIR, exist_ok=True)
@@ -104,6 +145,15 @@ def main():
               "manually from the upstream repository and place them in "
               f"{os.path.relpath(DST_DIR, PKG)}/ using the names listed above.")
         return 1
+
+    if not args.check and not args.no_install:
+        print("\nInstalling into DGD/ (not tracked by git):")
+        if not install():
+            print("\nInstall failed; the package cannot import the original arm. "
+                  "Re-run with --force, or place the files manually.")
+            return 1
+        print("\nDone. `python tools/verify_upstream_diff.py` should now pass.")
+
     if skipped and not args.check:
         print("\nTip: pass --force to refresh, or check md5 drift with --check.")
     return 0

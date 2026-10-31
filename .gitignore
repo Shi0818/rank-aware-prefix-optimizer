@@ -1,6 +1,12 @@
 # --- downloaded upstream baseline (re-fetch with tools/fetch_upstream.py) ---
 third_party/upstream/
 
+# --- upstream files installed by tools/fetch_upstream.py, never committed ---
+# The upstream release ships no licence file, so its code is not redistributed
+# here. `python tools/fetch_upstream.py` regenerates both files byte-identically.
+DGD/DGD.py
+DGD/help_functions.py
+
 # --- python ---
 __pycache__/
 *.py[cod]

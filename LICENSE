@@ -28,12 +28,15 @@ This repository builds on the GGPP release:
   Prompt-Perturbation-in-Retrieval-Augmented-Generation
   https://github.com/Hadise-zb/Prompt-Perturbation-in-Retrieval-Augmented-Generation
 
-The following files are copies of (or derived from) that release and remain the
-work of its authors:
+That release ships no licence file, so its code is not redistributed here. The two
+files this package imports from it are generated locally instead:
 
   DGD/DGD.py             byte-identical upstream copy, used as the "original" arm
   DGD/help_functions.py  upstream file plus a switchable query-wrapper parameter
 
-They are redistributed here so that the paired comparison is reproducible. If you
-use them, cite the original paper (see CITATION.cff) and observe the upstream
-licence. Only the additions listed in the README fall under the MIT licence above.
+Run `python tools/fetch_upstream.py` to obtain them from the upstream repository.
+Both paths are git-ignored and are never committed. If you use them, cite the
+original paper (see CITATION.cff); their copyright remains with the upstream authors.
+
+Everything else in this repository is this project's own work and falls under the
+MIT licence above.

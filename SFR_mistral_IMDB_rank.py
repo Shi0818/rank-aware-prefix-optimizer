@@ -74,6 +74,23 @@ p.add_argument('--stall-patience', type=int, default=30)
 p.add_argument('--snapshot-by', choices=['rank', 'loss'], default='rank')
 args = p.parse_args()
 
+# ===== upstream files are generated, not distributed =====
+# The upstream GGPP release carries no licence file, so this repository does not
+# redistribute its code. `tools/fetch_upstream.py` regenerates the two files below
+# byte-identically (the second one plus the query-wrapper switch).
+# Checked here, before the 7B embedder is loaded, so a missing file fails in a second.
+_ROOT = os.path.dirname(os.path.abspath(__file__))
+_MISSING = [p for p in ("DGD/DGD.py", "DGD/help_functions.py")
+            if not os.path.exists(os.path.join(_ROOT, p))]
+if _MISSING:
+    sys.exit(
+        "[error] missing upstream file(s): " + ", ".join(_MISSING) + "\n"
+        "        These belong to the GGPP release, which ships no licence, so they are\n"
+        "        not redistributed here. Generate them (byte-identical) with:\n"
+        "            python tools/fetch_upstream.py\n"
+    )
+
+
 ARM = args.arm
 START, END = args.start, args.end
 ITER, K0, TOPK = args.iterations, args.firstk, 10

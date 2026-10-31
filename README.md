@@ -77,14 +77,17 @@ python tools/verify_upstream_diff.py     # fails loudly if any of the above is u
 ```bash
 pip install -r requirements.txt
 
-# 0) logic checks — CPU, seconds, no weights needed
+# 1) regenerate the upstream files this package imports from (required once)
+python tools/fetch_upstream.py
+
+# 2) logic checks — CPU, seconds, no weights needed
 python tests/test_rank_optimizer.py
 
-# 1) smoke test on one GPU
+# 3) smoke test on one GPU
 export GGPP_USE_INSTRUCT=0
 python SFR_mistral_IMDB_rank.py --arm rank --start 208 --end 210 --iterations 20 --limit 2
 
-# 2) paired evaluation (both arms; needs the data cache + baseline results, see docs)
+# 4) paired evaluation (both arms; needs the data cache + baseline results, see docs)
 python run_pair_eval.py --start 208 --end 308 --gpu-orig 2 --gpu-rank 0
 python summarize_pair.py --pair-dir ./results_pair
 ```
@@ -141,8 +144,12 @@ See [`CITATION.cff`](CITATION.cff).
 The pipeline, the dataset preparation, the original optimizer and the detection
 notebook are the work of the GGPP authors — this repository only adds the rank-aware
 optimizer and the surrounding evaluation tooling.
-[`DGD/DGD.py`](DGD/DGD.py) and the base of [`DGD/help_functions.py`](DGD/help_functions.py)
-are upstream copies; please respect the upstream licence and cite the original paper.
+
+The upstream release ships **no licence file**, so its code is not redistributed here.
+`DGD/DGD.py` and `DGD/help_functions.py` are generated locally by
+`python tools/fetch_upstream.py` (byte-identical; the second one plus the query-wrapper
+switch) and are git-ignored. Cite the original paper — their copyright stays with its
+authors.
 The additions are released under the MIT licence (see [`LICENSE`](LICENSE)).
 
 ## Scope

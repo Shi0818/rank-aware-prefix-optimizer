@@ -19,19 +19,25 @@ verification batch, so VRAM headroom matters more than throughput.
 
 ---
 
-## 1. Obtain the upstream baseline and verify the diff
+## 1. Generate the upstream files (required first step) and verify the diff
 
-`DGD/DGD.py` is a byte-identical copy of the upstream optimizer and is used as the
-**original arm**, so this repository's claim ("only our new files differ") is
-machine-checkable:
+The upstream release ships no licence file, so this repository does not redistribute
+its code. The step below is **required before anything else runs**: it downloads the
+upstream release and regenerates the two files the package imports from.
 
 ```bash
-python tools/fetch_upstream.py          # downloads the upstream release into third_party/upstream/
+python tools/fetch_upstream.py          # downloads into third_party/upstream/, then installs
+                                        # DGD/DGD.py and DGD/help_functions.py (git-ignored)
 python tools/verify_upstream_diff.py    # asserts DGD.py is identical and the notebook differs in 1 cell
 ```
 
-`verify_upstream_diff.py` exits non-zero if the diff is larger than claimed, so it can
-be wired into CI.
+`DGD/DGD.py` is the byte-identical upstream optimizer used as the **original arm**, so
+this repository's claim ("only our new files differ") stays machine-checkable. The
+install is byte-reproducible: re-running it regenerates both files with unchanged md5.
+
+If you skip this step, `SFR_mistral_IMDB_rank.py` exits with an explicit message rather
+than an ImportError. `verify_upstream_diff.py` exits non-zero if the diff is larger than
+claimed, so it can be wired into CI.
 
 ---
 
