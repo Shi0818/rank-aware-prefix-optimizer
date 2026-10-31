@@ -2,6 +2,12 @@
 
 **Rank-aware prefix optimization for prompt-perturbation attacks on RAG retrieval.**
 
+> **Research use only.** This code implements an adversarial method and is released for
+> research on the robustness of retrieval-augmented generation, and for building defenses
+> against it. No attack artefacts (optimised prefixes, poisoned passages) are distributed
+> here — only the optimiser and the evaluation harness. If you use it, cite it and follow
+> your institution's rules on adversarial ML research.
+
 `DGD/DGD_rank.py` is a drop-in replacement for the prefix optimizer in
 [GGPP (KDD'24)](https://github.com/Hadise-zb/Prompt-Perturbation-in-Retrieval-Augmented-Generation)
 that optimises **the quantity the attack is actually graded on** — the *rank* of the
