@@ -153,6 +153,7 @@ plus the query-wrapper switch) and are git-ignored.
 unchanged — so the notebook route stays runnable without a generation step. Its copyright
 stays with the upstream authors and the MIT licence does not extend to it; `LICENSE` states
 the exact scope.
+
 The additions are released under the MIT licence (see [`LICENSE`](LICENSE)).
 
 ## Scope
@@ -160,3 +161,13 @@ The additions are released under the MIT licence (see [`LICENSE`](LICENSE)).
 White-box only (gradients through the embedding model are required) and measured on a
 single setting (`SFR-Embedding-Mistral` + IMDB). Other embedders and corpora are
 untested. See [`docs/METHOD.md`](docs/METHOD.md) §5.
+
+## Contact
+
+Corrections, failed reproductions and suggestions are welcome through
+[Issues](https://github.com/Shi0818/rank-aware-prefix-optimizer/issues) — that is the
+preferred channel, and keeping it public means the next person hitting the same problem
+finds the answer instead of re-deriving it.
+
+If something does not belong in a public thread, open an issue saying so and we can move
+it elsewhere; please don't paste credentials or private data into an issue.
