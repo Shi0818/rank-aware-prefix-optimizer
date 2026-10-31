@@ -28,15 +28,30 @@ This repository builds on the GGPP release:
   Prompt-Perturbation-in-Retrieval-Augmented-Generation
   https://github.com/Hadise-zb/Prompt-Perturbation-in-Retrieval-Augmented-Generation
 
-That release ships no licence file, so its code is not redistributed here. The two
-files this package imports from it are generated locally instead:
+That release ships no licence file. Its code is therefore kept out of this repository
+wherever that is practical. The two files this package imports from are generated
+locally instead:
 
   DGD/DGD.py             byte-identical upstream copy, used as the "original" arm
   DGD/help_functions.py  upstream file plus a switchable query-wrapper parameter
 
 Run `python tools/fetch_upstream.py` to obtain them from the upstream repository.
-Both paths are git-ignored and are never committed. If you use them, cite the
-original paper (see CITATION.cff); their copyright remains with the upstream authors.
+Both paths are git-ignored and are never committed.
 
-Everything else in this repository is this project's own work and falls under the
-MIT licence above.
+One file is kept in the repository although it is derived from upstream:
+
+  SFR_mistral_IMDB_rank.ipynb   the upstream notebook with cell 17 (the attack loop)
+                                replaced; the other 17 cells are byte-identical to
+                                the upstream release
+
+It is retained so that the notebook route stays visible and runnable without a
+generation step. Its copyright remains with the upstream authors and the MIT licence
+above does not extend to it. The exact difference is recorded in
+tools/SFR_mistral_IMDB_notebook.diff, and tools/build_rank_notebook.py can regenerate
+it from the upstream file.
+
+If you use any of the above, cite the original paper (see CITATION.cff).
+
+Everything else in this repository - the rank-aware optimizer, the evaluation harness,
+the tests and the tooling - is this project's own work and falls under the MIT licence
+above.

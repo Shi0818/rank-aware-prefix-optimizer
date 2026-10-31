@@ -145,11 +145,14 @@ The pipeline, the dataset preparation, the original optimizer and the detection
 notebook are the work of the GGPP authors — this repository only adds the rank-aware
 optimizer and the surrounding evaluation tooling.
 
-The upstream release ships **no licence file**, so its code is not redistributed here.
-`DGD/DGD.py` and `DGD/help_functions.py` are generated locally by
-`python tools/fetch_upstream.py` (byte-identical; the second one plus the query-wrapper
-switch) and are git-ignored. Cite the original paper — their copyright stays with its
-authors.
+The upstream release ships **no licence file**. `DGD/DGD.py` and `DGD/help_functions.py`
+are generated locally by `python tools/fetch_upstream.py` (byte-identical; the second one
+plus the query-wrapper switch) and are git-ignored.
+
+`SFR_mistral_IMDB_rank.ipynb` is kept as an upstream-derived file — 17 of its 18 cells are
+unchanged — so the notebook route stays runnable without a generation step. Its copyright
+stays with the upstream authors and the MIT licence does not extend to it; `LICENSE` states
+the exact scope.
 The additions are released under the MIT licence (see [`LICENSE`](LICENSE)).
 
 ## Scope
