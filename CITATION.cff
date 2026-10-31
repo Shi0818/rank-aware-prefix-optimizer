@@ -10,7 +10,7 @@ type: software
 license: MIT
 version: 0.1.0
 date-released: "2026-10-13"
-repository-code: "https://github.com/<your-account>/GGPP-RankAware"
+repository-code: "https://github.com/Shi0818/rank-aware-prefix-optimizer"
 keywords:
   - retrieval-augmented generation
   - adversarial attack
